@@ -95,6 +95,12 @@ class CGameContext : public IGameServer
 
 	bool m_Resetting;
 public:
+	//200 ms / 20ms per tick = 10
+	#define MAX_PLAYER_HISTORY 10
+	int playerHistoryIndex = 0;
+	vec2 playerHistory [MAX_PLAYER_HISTORY] [MAX_CLIENTS];
+
+
 	IServer *Server() const { return m_pServer; }
 	class IConsole *Console() { return m_pConsole; }
 	CCollision *Collision() { return &m_Collision; }

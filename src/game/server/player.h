@@ -123,6 +123,7 @@ public:
 	bool m_GotAward;
 
 	bool m_FreezeOnSpawn;
+	int m_ClientID;
 private:
 	CCharacter *m_pCharacter;
 	CGameContext *m_pGameServer;
@@ -132,7 +133,7 @@ private:
 
 	//
 	bool m_Spawning;
-	int m_ClientID;
+	
 	int m_Team;
 };
 

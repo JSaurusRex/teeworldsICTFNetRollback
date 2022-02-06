@@ -61,6 +61,7 @@ protected:
 	bool m_ForceBalanced;
 
 public:
+	
 	const char *m_pGameType;
 
 	bool IsTeamplay() const;

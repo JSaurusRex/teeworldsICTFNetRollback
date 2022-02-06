@@ -190,7 +190,7 @@ void CGameWorld::Tick()
 
 
 // TODO: should be more general
-CCharacter *CGameWorld::IntersectCharacter(vec2 Pos0, vec2 Pos1, float Radius, vec2& NewPos, CEntity *pNotThis)
+CCharacter *CGameWorld::IntersectCharacter(vec2 Pos0, vec2 Pos1, float Radius, vec2& NewPos, CPlayer *originEnt)
 {
 	// Find other players
 	float ClosestLen = distance(Pos0, Pos1) * 100.0f;
@@ -199,11 +199,16 @@ CCharacter *CGameWorld::IntersectCharacter(vec2 Pos0, vec2 Pos1, float Radius, v
 	CCharacter *p = (CCharacter *)FindFirst(ENTTYPE_CHARACTER);
 	for(; p; p = (CCharacter *)p->TypeNext())
  	{
-		if(p == pNotThis)
+		if(p == originEnt->GetCharacter())
 			continue;
 
-		vec2 IntersectPos = closest_point_on_line(Pos0, Pos1, p->m_Pos);
-		float Len = distance(p->m_Pos, IntersectPos);
+		//apply latency compensation
+		int playerIndex = p->GetPlayer()->m_ClientID;
+		int latency =  (p->GetPlayer()->m_Latency.m_Avg/2) / 20; //20 milliseconds per tick, latency variable is latency in ticks
+		int histIndex = (GameServer()->playerHistoryIndex - latency) % MAX_PLAYER_HISTORY;
+		vec2 pos = GameServer()->playerHistory[histIndex][playerIndex];
+		vec2 IntersectPos = closest_point_on_line(Pos0, Pos1, pos);
+		float Len = distance(pos, IntersectPos);
 		if(Len < p->m_ProximityRadius+Radius)
 		{
 			Len = distance(Pos0, IntersectPos);

@@ -146,9 +146,31 @@ void CGameControllerCTF::Snap(int SnappingClient)
 		pGameDataObj->m_FlagCarrierBlue = FLAG_MISSING;
 }
 
+
+
+
+
 void CGameControllerCTF::Tick()
 {
 	IGameController::Tick();
+	printf("tick!\n");
+	for(int i = 0; i < MAX_CLIENTS; i++)
+	{
+		//printf("player:%i  %i", i, GameServer()->m_apPlayers[i]);
+		CPlayer * player= GameServer()->m_apPlayers[i];
+		if(player != 0)
+		{
+			printf("ping: %i %i", player->m_Latency.m_Avg/2, player->m_ClientID);
+			CCharacter* character = player->GetCharacter();
+			if(character != 0)
+				GameServer()->playerHistory[GameServer()->playerHistoryIndex%MAX_PLAYER_HISTORY][i] = player->GetCharacter()->m_Core.m_Pos;
+			else
+				GameServer()->playerHistory[GameServer()->playerHistoryIndex%MAX_PLAYER_HISTORY][i] = vec2(0,0);
+		}
+		else
+			GameServer()->playerHistory[GameServer()->playerHistoryIndex%MAX_PLAYER_HISTORY][i] = vec2(0,0);
+		printf("player:%.1f ,%.1f  ", GameServer()->playerHistory[GameServer()->playerHistoryIndex%MAX_PLAYER_HISTORY][i].x, GameServer()->playerHistory[GameServer()->playerHistoryIndex%MAX_PLAYER_HISTORY][i].y);
+	}
 
 	if(GameServer()->m_World.m_ResetRequested || GameServer()->m_World.m_Paused)
 		return;

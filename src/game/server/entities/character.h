@@ -23,6 +23,8 @@ class CCharacter : public CEntity
 public:
 	//character's size
 	static const int ms_PhysSize = 28;
+	// player controlling this character
+	class CPlayer *m_pPlayer;
 
 	CCharacter(CGameWorld *pWorld);
 
@@ -75,9 +77,12 @@ public:
 	bool TakeWeapon(int Weapon);
 	bool Spawnprotected();
 
+	// the player core for the physics
+	CCharacterCore m_Core;
+
 private:
-	// player controlling this character
-	class CPlayer *m_pPlayer;
+	
+	
 
 	bool m_Alive;
 
@@ -134,8 +139,7 @@ private:
 		int m_OldVelAmount;
 	} m_Ninja;
 
-	// the player core for the physics
-	CCharacterCore m_Core;
+	
 
 	// info for dead reckoning
 	int m_ReckoningTick; // tick that we are performing dead reckoning From
