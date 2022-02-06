@@ -171,6 +171,7 @@ void CGameControllerCTF::Tick()
 			GameServer()->playerHistory[GameServer()->playerHistoryIndex%MAX_PLAYER_HISTORY][i] = vec2(0,0);
 		printf("player:%.1f ,%.1f  ", GameServer()->playerHistory[GameServer()->playerHistoryIndex%MAX_PLAYER_HISTORY][i].x, GameServer()->playerHistory[GameServer()->playerHistoryIndex%MAX_PLAYER_HISTORY][i].y);
 	}
+	GameServer()->playerHistoryIndex++;
 
 	if(GameServer()->m_World.m_ResetRequested || GameServer()->m_World.m_Paused)
 		return;
