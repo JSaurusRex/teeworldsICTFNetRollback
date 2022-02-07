@@ -221,7 +221,7 @@ CCharacter *CGameWorld::IntersectCharacter(vec2 Pos0, vec2 Pos1, float Radius, v
 					NewPos = IntersectPos;
 					ClosestLen = Len;
 					pClosest = p;
-					printf("\n%i, %i", i, latency);
+					printf("\n%i, %i, %i, %f", i, latency, p->GetPlayer()->m_Latency.m_Avg, (float)i / p->GetPlayer()->m_Latency.m_Avg);
 					break;
 				}
 			}
