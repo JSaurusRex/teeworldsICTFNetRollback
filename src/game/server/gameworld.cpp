@@ -204,10 +204,7 @@ CCharacter *CGameWorld::IntersectCharacter(vec2 Pos0, vec2 Pos1, float Radius, v
 
 		//apply latency compensation
 		int playerIndex = p->GetPlayer()->m_ClientID;
-		int ping = p->GetPlayer()->m_Latency.m_Avg - GameServer()->latencyVariable;
-		int latency =  (int)((ping*2+MAX_PLAYER_HISTORY/2) / 20.0); //20 milliseconds per tick, latency variable is latency in ticks
-		//20 milliseconds response time
-		printf("\n%i   %i %i %i", playerIndex, latency, ping, GameServer()->latencyVariable);
+		int latency =  (p->GetPlayer()->m_Latency.m_Avg/2) / 20; //20 milliseconds per tick, latency variable is latency in ticks
 		int histIndex = (GameServer()->playerHistoryIndex - latency) % MAX_PLAYER_HISTORY;
 		vec2 pos = GameServer()->playerHistory[histIndex][playerIndex];
 		vec2 IntersectPos = closest_point_on_line(Pos0, Pos1, pos);
