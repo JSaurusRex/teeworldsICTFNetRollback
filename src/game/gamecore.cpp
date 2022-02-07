@@ -1,7 +1,9 @@
 /* (c) Magnus Auvinen. See licence.txt in the root of the distribution for more information. */
 /* If you are missing that file, acquire a complete release at teeworlds.com.                */
 #include "gamecore.h"
-
+#ifndef GAME_SERVER_PLAYER_H
+	#include <game/server/player.h>
+#endif
 const char *CTuningParams::m_apNames[] =
 {
 	#define MACRO_TUNING_PARAM(Name,ScriptName,Value) #ScriptName,
@@ -74,8 +76,9 @@ void CCharacterCore::Reset()
 	m_TriggeredEvents = 0;
 }
 
-void CCharacterCore::Tick(bool UseInput)
+void CCharacterCore::Tick(bool UseInput, CCharacterCore * HookHit)
 {
+	
 	float PhysSize = 28.0f;
 	m_TriggeredEvents = 0;
 
@@ -210,21 +213,28 @@ void CCharacterCore::Tick(bool UseInput)
 		if(m_pWorld && m_pWorld->m_Tuning.m_PlayerHooking)
 		{
 			float Distance = 0.0f;
-			for(int i = 0; i < MAX_CLIENTS; i++)
+			// for(int i = 0; i < MAX_CLIENTS; i++)
+			// {
+			// 	CCharacterCore *pCharCore = m_pWorld->m_apCharacters[i];
+			// 	if(!pCharCore || pCharCore == this)
+			// 		continue;
+			if (HookHit != 0)
 			{
-				CCharacterCore *pCharCore = m_pWorld->m_apCharacters[i];
-				if(!pCharCore || pCharCore == this)
-					continue;
-
-				vec2 ClosestPoint = closest_point_on_line(m_HookPos, NewPos, pCharCore->m_Pos);
-				if(distance(pCharCore->m_Pos, ClosestPoint) < PhysSize+2.0f)
+				vec2 ClosestPoint = closest_point_on_line(m_HookPos, NewPos, HookHit->m_Pos);
+				if(distance(HookHit->m_Pos, ClosestPoint) < PhysSize+2.0f)
 				{
-					if (m_HookedPlayer == -1 || distance(m_HookPos, pCharCore->m_Pos) < Distance)
+					if (m_HookedPlayer == -1 || distance(m_HookPos, HookHit->m_Pos) < Distance)
 					{
 						m_TriggeredEvents |= COREEVENT_HOOK_ATTACH_PLAYER;
 						m_HookState = HOOK_GRABBED;
+						int i = 0;
+						for (; i < MAX_CLIENTS; i++)
+						{
+							if (HookHit == m_pWorld->m_apCharacters[i])
+								break;
+						}
 						m_HookedPlayer = i;
-						Distance = distance(m_HookPos, pCharCore->m_Pos);
+						Distance = distance(m_HookPos, HookHit->m_Pos);
 					}
 				}
 			}
@@ -348,6 +358,7 @@ void CCharacterCore::Tick(bool UseInput)
 					m_Vel.y = SaturatedAdd(-DragSpeed, DragSpeed, m_Vel.y, -Accel*Dir.y*0.25f);
 				}
 			}
+			
 		}
 	}
 

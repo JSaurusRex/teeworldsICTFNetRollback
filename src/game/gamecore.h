@@ -174,9 +174,10 @@ public:
 
 class CCharacterCore
 {
-	CWorldCore *m_pWorld;
+	
 	CCollision *m_pCollision;
 public:
+	CWorldCore *m_pWorld;
 	vec2 m_Pos;
 	vec2 m_Vel;
 
@@ -196,7 +197,7 @@ public:
 
 	void Init(CWorldCore *pWorld, CCollision *pCollision);
 	void Reset();
-	void Tick(bool UseInput);
+	void Tick(bool UseInput, CCharacterCore* HookHit);
 	void Move();
 
 	void Read(const CNetObj_CharacterCore *pObjCore);
