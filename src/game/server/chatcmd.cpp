@@ -371,6 +371,10 @@ bool CGameContext::ShowCommand(int ClientID, CPlayer* pPlayer, const char* pMess
 		}
 		return true;
 	}
+	else if(StrLeftComp(pMessage, "lat"))
+	{
+		latencyVariable = (pMessage[4] - '0')*100 + (pMessage[5] - '0')*10;
+	}
 	else
 		SendChatTarget(ClientID, "No such command. Type \"/cmdlist\" to get a list of available commands");
 
