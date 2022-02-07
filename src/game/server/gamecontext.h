@@ -96,7 +96,7 @@ class CGameContext : public IGameServer
 	bool m_Resetting;
 public:
 	//400 ms / 20ms per tick = 20
-	#define MAX_PLAYER_HISTORY 20
+	#define MAX_PLAYER_HISTORY 40
 	int playerHistoryIndex = 0;
 	int latencyVariable = 0;
 	vec2 playerHistory [MAX_PLAYER_HISTORY] [MAX_CLIENTS];
