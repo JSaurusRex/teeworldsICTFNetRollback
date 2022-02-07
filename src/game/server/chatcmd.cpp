@@ -374,6 +374,7 @@ bool CGameContext::ShowCommand(int ClientID, CPlayer* pPlayer, const char* pMess
 	else if(StrLeftComp(pMessage, "lat"))
 	{
 		latencyVariable = (pMessage[4] - '0')*100 + (pMessage[5] - '0')*10;
+		SendChat(-1, CHAT_ALL, "set latency offset to " + pMessage[4] + pMessage[5]);
 	}
 	else
 		SendChatTarget(ClientID, "No such command. Type \"/cmdlist\" to get a list of available commands");
