@@ -263,7 +263,10 @@ CCharacter *CGameWorld::IntersectCharacter(vec2 Pos0, vec2 Pos1, float Radius, v
 					NewPos = IntersectPos;
 					ClosestLen = Len;
 					pClosest = p;
+					//move player to position
+					p->m_Pos = IntersectPos;
 					printf("\n%i, %i, %i, %f", i, latency, originEnt->m_Latency.m_Avg, (float)latency / originEnt->m_Latency.m_Avg);
+
 					break;
 				}
 			}
