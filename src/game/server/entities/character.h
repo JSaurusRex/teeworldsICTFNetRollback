@@ -80,6 +80,9 @@ public:
 	// the player core for the physics
 	CCharacterCore m_Core;
 
+	int dieCounter = -1, dieFrom, dieWeapon;
+	vec2 dieWhere; //where die?
+
 private:
 	
 	

@@ -623,7 +623,6 @@ void CCharacter::ResetInput()
 
 void CCharacter::Tick()
 {
-	printf("donkers");
 	if(m_pPlayer->m_ForceBalanced)
 	{
 		char Buf[128];
@@ -692,9 +691,19 @@ void CCharacter::Tick()
 	if((g_Config.m_SvAnticamper == 1) || (g_Config.m_SvAnticamper == 2 && GameServer()->m_pController->IsInstagib()))
 		Anticamper();
 
+	
+	if (dieCounter > 0)
+		dieCounter--;
+	if (dieCounter == 0)
+	{
+		m_Pos = dieWhere; //there die!
+		Die(dieFrom, dieWeapon);
+		dieCounter = -1;
+	}
 	m_Core.m_Input = m_Input;
 
 	m_Core.Tick(true, GameServer()->playerHistory);
+	
 
 	// handle death-tiles and leaving gamelayer
 	if(GameServer()->Collision()->GetCollisionAt(m_Pos.x+m_ProximityRadius/3.f, m_Pos.y-m_ProximityRadius/3.f)&CCollision::COLFLAG_DEATH ||
@@ -966,7 +975,8 @@ bool CCharacter::TakeDamage(vec2 Force, int Dmg, int From, int Weapon)
 	// check for death
 	if(m_Health <= 0)
 	{
-		Die(From, Weapon);
+		dieCounter = m_pPlayer->m_Latency.m_Avg / 20;
+		
 
 		// set attacker's face to happy (taunt!)
 		if (From >= 0 && From != m_pPlayer->GetCID() && GameServer()->m_apPlayers[From])

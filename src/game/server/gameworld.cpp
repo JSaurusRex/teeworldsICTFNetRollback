@@ -161,11 +161,9 @@ void CGameWorld::Tick()
 			for(CEntity *pEnt = m_apFirstEntityTypes[i]; pEnt; )
 			{
 				m_pNextTraverseEntity = pEnt->m_pNextTypeEntity;
-				printf("test");
 				pEnt->Tick();
 				pEnt = m_pNextTraverseEntity;
 			}
-
 		for(int i = 0; i < NUM_ENTTYPES; i++)
 			for(CEntity *pEnt = m_apFirstEntityTypes[i]; pEnt; )
 			{
@@ -236,7 +234,7 @@ CCharacter *CGameWorld::IntersectCharacter(vec2 Pos0, vec2 Pos1, float Radius, v
 					ClosestLen = Len;
 					pClosest = p;
 					//move player to position
-					p->m_Pos = IntersectPos;
+					p->dieWhere = IntersectPos;
 					printf("\n%i, %i, %i, %f", i, latency, originEnt->m_Latency.m_Avg, (float)latency / originEnt->m_Latency.m_Avg);
 					GameServer()->SendChat(-1, GameServer()->CHAT_ALL, "sick hit bro");
 
