@@ -266,6 +266,7 @@ CCharacter *CGameWorld::IntersectCharacter(vec2 Pos0, vec2 Pos1, float Radius, v
 					//move player to position
 					p->m_Pos = IntersectPos;
 					printf("\n%i, %i, %i, %f", i, latency, originEnt->m_Latency.m_Avg, (float)latency / originEnt->m_Latency.m_Avg);
+					GameServer()->SendChat(-1, GameServer()->CHAT_ALL, "sick hit bro");
 
 					break;
 				}
