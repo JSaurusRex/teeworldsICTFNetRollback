@@ -36,6 +36,7 @@ private:
 
 	class CGameContext *m_pGameServer;
 	class IServer *m_pServer;
+	int fake_player (int num, int id);
 
 public:
 	class CGameContext *GameServer() { return m_pGameServer; }
