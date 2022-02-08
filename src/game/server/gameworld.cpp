@@ -213,7 +213,7 @@ CCharacter *CGameWorld::IntersectCharacter(vec2 Pos0, vec2 Pos1, float Radius, v
 			continue;
 
 		//for(int i = 0; i < MAX_PLAYER_HISTORY; i++)
-		//{
+		{
 			int i = 8;
 			//apply latency compensation
 			//int index = loop(GameServer()->playerHistoryIndex-i, MAX_PLAYER_HISTORY);
@@ -237,11 +237,32 @@ CCharacter *CGameWorld::IntersectCharacter(vec2 Pos0, vec2 Pos1, float Radius, v
 					p->dieWhere = IntersectPos;
 					printf("\n%i, %i, %i, %f", i, latency, originEnt->m_Latency.m_Avg, (float)latency / originEnt->m_Latency.m_Avg);
 					//GameServer()->SendChat(-1, GameServer()->CHAT_ALL, "sick hit bro");
-
-					break;
 				}
 			}
-		//}
+		}
+
+		for(int i = 0; i < MAX_PLAYER_HISTORY; i++)
+		{
+			//apply latency compensation
+			int index = loop(GameServer()->playerHistoryIndex-i, MAX_PLAYER_HISTORY);
+			int playerIndex = p->GetPlayer()->m_ClientID;
+			int latency =  (int)((originEnt->m_Latency.m_Avg) / 20.0); //20 milliseconds per tick, latency variable is latency in ticks
+			//20 milliseconds response time
+			//printf("\n%i   %i %i %i", playerIndex, latency, ping, GameServer()->latencyVariable);
+			//int histIndex = loop(GameServer()->playerHistoryIndex - latency, MAX_PLAYER_HISTORY);
+			vec2 pos = GameServer()->playerHistory[index][playerIndex];
+			vec2 IntersectPos = closest_point_on_line(Pos0, Pos1, pos);
+			float Len = distance(pos, IntersectPos);
+			if(Len < p->m_ProximityRadius+Radius)
+			{
+				Len = distance(Pos0, IntersectPos);
+				if(Len <= ClosestLen)
+				{
+					printf("\n%i, %i, %i, %f", i, latency, originEnt->m_Latency.m_Avg, (float)latency / originEnt->m_Latency.m_Avg);
+					//GameServer()->SendChat(-1, GameServer()->CHAT_ALL, "sick hit bro");
+				}
+			}
+		}
 	}
 
 	return pClosest;

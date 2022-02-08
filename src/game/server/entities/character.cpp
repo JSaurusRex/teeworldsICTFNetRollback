@@ -1008,8 +1008,8 @@ bool CCharacter::TakeDamage(vec2 Force, int Dmg, int From, int Weapon)
 void CCharacter::Snap(int SnappingClient)
 {
 	float latency = m_pPlayer->m_Latency.m_Avg / 20.0;
-	printf("\n%.1f %.1f", (vec2(latency, latency) * m_Core.m_Vel).x, (vec2(latency,latency) * m_Core.m_Vel).y);
-	printf("\n%.1f %.1f\n", m_Pos.x, m_Pos.y);
+	//printf("\n%.1f %.1f", (vec2(latency, latency) * m_Core.m_Vel).x, (vec2(latency,latency) * m_Core.m_Vel).y);
+	//printf("\n%.1f %.1f\n", m_Pos.x, m_Pos.y);
 	if(NetworkClipped(SnappingClient, m_Pos + vec2(latency,latency) * m_Core.m_Vel) && NetworkClipped(SnappingClient, m_Pos))
 		return;
 
