@@ -976,6 +976,8 @@ bool CCharacter::TakeDamage(vec2 Force, int Dmg, int From, int Weapon)
 	if(m_Health <= 0)
 	{
 		dieCounter = m_pPlayer->m_Latency.m_Avg / 20;
+		dieFrom = From;
+		dieWeapon = Weapon;
 		
 
 		// set attacker's face to happy (taunt!)
