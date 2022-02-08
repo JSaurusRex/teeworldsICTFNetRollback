@@ -623,6 +623,7 @@ void CCharacter::ResetInput()
 
 void CCharacter::Tick()
 {
+	printf("donkers");
 	if(m_pPlayer->m_ForceBalanced)
 	{
 		char Buf[128];
@@ -693,14 +694,7 @@ void CCharacter::Tick()
 
 	m_Core.m_Input = m_Input;
 
-	//character movement taken from gamecore but hooks have latency / ping compensation
-	vec2 NewPos = m_Core.m_HookPos+m_Core.m_HookDir*m_Core.m_pWorld->m_Tuning.m_HookFireSpeed;
-	vec2 temp;
-	CCharacter * HookHit = GameWorld()->IntersectCharacter(m_Core.m_HookPos, NewPos, 30, temp, m_pPlayer);
-	if(HookHit !=0)
-		m_Core.Tick(true, &HookHit->m_Core);
-	else
-		m_Core.Tick(true, 0);
+	m_Core.Tick(true, GameServer()->playerHistory);
 
 	// handle death-tiles and leaving gamelayer
 	if(GameServer()->Collision()->GetCollisionAt(m_Pos.x+m_ProximityRadius/3.f, m_Pos.y-m_ProximityRadius/3.f)&CCollision::COLFLAG_DEATH ||
@@ -726,7 +720,7 @@ void CCharacter::TickDefered()
 	{
 		CWorldCore TempWorld;
 		m_ReckoningCore.Init(&TempWorld, GameServer()->Collision());
-		m_ReckoningCore.Tick(false, 0);
+		m_ReckoningCore.Tick(false, GameServer()->playerHistory);
 		m_ReckoningCore.Move();
 		m_ReckoningCore.Quantize();
 	}

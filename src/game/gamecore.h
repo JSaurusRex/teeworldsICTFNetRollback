@@ -197,7 +197,7 @@ public:
 
 	void Init(CWorldCore *pWorld, CCollision *pCollision);
 	void Reset();
-	void Tick(bool UseInput, CCharacterCore* HookHit);
+	void Tick(bool UseInput, vec2 pHistory[40][MAX_CLIENTS]);
 	void Move();
 
 	void Read(const CNetObj_CharacterCore *pObjCore);

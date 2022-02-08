@@ -161,6 +161,7 @@ void CGameWorld::Tick()
 			for(CEntity *pEnt = m_apFirstEntityTypes[i]; pEnt; )
 			{
 				m_pNextTraverseEntity = pEnt->m_pNextTypeEntity;
+				printf("test");
 				pEnt->Tick();
 				pEnt = m_pNextTraverseEntity;
 			}
@@ -190,35 +191,6 @@ void CGameWorld::Tick()
 
 
 
-int CGameWorld::fake_player (int num, int id)
-{
-    CNetObj_ClientInfo *pClientInfo = static_cast<CNetObj_ClientInfo *>
-        (Server()->SnapNewItem(NETOBJTYPE_CLIENTINFO, id, sizeof(CNetObj_ClientInfo)));
-    if(!pClientInfo)
-        return id;
-    StrToInts(&pClientInfo->m_Name0, 4, "");
-    StrToInts(&pClientInfo->m_Clan0, 3, "");
-    pClientInfo->m_Country = Server()->ClientCountry(0);
-    //StrToInts(&pClientInfo->m_Skin0, 6, GameServer()->m_apPlayers[0].m_SkinName);
-    //pClientInfo->m_UseCustomColor = m_TeeInfos.m_UseCustomColor;
-    //pClientInfo->m_ColorBody = m_TeeInfos.m_ColorBody;
-    //pClientInfo->m_ColorFeet = m_TeeInfos.m_ColorFeet;
-    CNetObj_PlayerInfo *pPlayerInfo = static_cast<CNetObj_PlayerInfo *>
-        (Server()->SnapNewItem(NETOBJTYPE_PLAYERINFO, id, sizeof(CNetObj_PlayerInfo)));
-    if(!pPlayerInfo)
-        return id;
-    pPlayerInfo->m_Latency = 5;
-    pPlayerInfo->m_Local = 0;
-    pPlayerInfo->m_ClientID = id;
-    pPlayerInfo->m_Score = (5);
-    //if (g_Config.m_FakeTarget >= 0)
-	pPlayerInfo->m_Team = 1;
-    //else
-    //    pPlayerInfo->m_Team = faketees[num].team;
-
-    pPlayerInfo->m_Score = 0;
-    return id;
-}
 
 int loop(int value, int loop)
 {
