@@ -33,6 +33,7 @@ int CEntity::NetworkClipped(int SnappingClient)
 	return NetworkClipped(SnappingClient, m_Pos);
 }
 
+
 int CEntity::NetworkClipped(int SnappingClient, vec2 CheckPos)
 {
 	if(SnappingClient == -1)
