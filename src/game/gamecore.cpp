@@ -279,7 +279,7 @@ void CCharacterCore::Tick(bool UseInput, CCharacterCore * HookHit)
 		}
 
 		// don't do this hook rutine when we are hook to a player
-		if(m_HookedPlayer == -1 && distance(m_HookPos, m_Pos) > 46.0f)
+		if((HookHit != 0 && m_HookedPlayer == -1 && distance(m_HookPos, m_Pos) > 46.0f) || (HookHit == 0 && m_HookedPlayer == -1 && distance(m_HookPos, m_Pos) > 46.0f))
 		{
 			vec2 HookVel = normalize(m_HookPos-m_Pos)*m_pWorld->m_Tuning.m_HookDragAccel;
 			// the hook as more power to drag you up then down.
