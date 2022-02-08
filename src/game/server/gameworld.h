@@ -49,6 +49,8 @@ public:
 	CGameWorld();
 	~CGameWorld();
 
+	vec2 lastHit;
+
 	void SetGameServer(CGameContext *pGameServer);
 
 	CEntity *FindFirst(int Type);

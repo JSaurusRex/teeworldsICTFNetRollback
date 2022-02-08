@@ -220,7 +220,14 @@ int CGameWorld::fake_player (int num, int id)
     return id;
 }
 
-
+int loop(int value, int loop)
+{
+	if (value < 0)
+		return -(abs(value)%loop);
+	if (value > loop)
+		return value % loop;
+	return value;
+}
 
 // TODO: should be more general
 CCharacter *CGameWorld::IntersectCharacter(vec2 Pos0, vec2 Pos1, float Radius, vec2& NewPos, CPlayer *originEnt)
@@ -238,12 +245,13 @@ CCharacter *CGameWorld::IntersectCharacter(vec2 Pos0, vec2 Pos1, float Radius, v
 		for(int i = 0; i < MAX_PLAYER_HISTORY; i++)
 		{
 			//apply latency compensation
+			int index = loop(i+GameServer()->playerHistoryIndex, MAX_PLAYER_HISTORY);
 			int playerIndex = p->GetPlayer()->m_ClientID;
-			int latency =  (int)((i+MAX_PLAYER_HISTORY/2) / 20.0); //20 milliseconds per tick, latency variable is latency in ticks
+			int latency =  (int)((index+MAX_PLAYER_HISTORY/2) / 20.0); //20 milliseconds per tick, latency variable is latency in ticks
 			//20 milliseconds response time
 			//printf("\n%i   %i %i %i", playerIndex, latency, ping, GameServer()->latencyVariable);
 			int histIndex = (GameServer()->playerHistoryIndex - latency) % MAX_PLAYER_HISTORY;
-			vec2 pos = GameServer()->playerHistory[i][playerIndex];
+			vec2 pos = GameServer()->playerHistory[index][playerIndex];
 			vec2 IntersectPos = closest_point_on_line(Pos0, Pos1, pos);
 			float Len = distance(pos, IntersectPos);
 			if(Len < p->m_ProximityRadius+Radius)
@@ -254,8 +262,7 @@ CCharacter *CGameWorld::IntersectCharacter(vec2 Pos0, vec2 Pos1, float Radius, v
 					NewPos = IntersectPos;
 					ClosestLen = Len;
 					pClosest = p;
-					printf("\n%i, %i, %i, %f", i, latency, p->GetPlayer()->m_Latency.m_Avg, (float)i / p->GetPlayer()->m_Latency.m_Avg);
-					fake_player (0, 15);
+					printf("\n%i, %i, %i, %f", index, latency, p->GetPlayer()->m_Latency.m_Avg, (float)index / p->GetPlayer()->m_Latency.m_Avg);
 					break;
 				}
 			}
