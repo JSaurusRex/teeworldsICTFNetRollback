@@ -242,8 +242,9 @@ CCharacter *CGameWorld::IntersectCharacter(vec2 Pos0, vec2 Pos1, float Radius, v
 		if(p == originEnt->GetCharacter())
 			continue;
 
-		for(int i = 0; i < MAX_PLAYER_HISTORY; i++)
-		{
+		//for(int i = 0; i < MAX_PLAYER_HISTORY; i++)
+		//{
+			int i = 0;
 			//apply latency compensation
 			int index = loop(GameServer()->playerHistoryIndex-i, MAX_PLAYER_HISTORY);
 			int playerIndex = p->GetPlayer()->m_ClientID;
@@ -266,7 +267,7 @@ CCharacter *CGameWorld::IntersectCharacter(vec2 Pos0, vec2 Pos1, float Radius, v
 					break;
 				}
 			}
-		}
+		//}
 	}
 
 	return pClosest;
