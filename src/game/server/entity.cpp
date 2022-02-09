@@ -43,7 +43,7 @@ int CEntity::NetworkClipped(int SnappingClient, vec2 CheckPos)
 	vec2 viewPos = player->m_ViewPos;
 	vec2 predViewPos = viewPos;
 	if (player->GetCharacter())
-		vec2 predViewPos = viewPos + player->GetCharacter()->m_Core.m_Vel * vec2(ticksLatency, ticksLatency);
+		predViewPos = viewPos + player->GetCharacter()->m_Core.m_Vel * vec2(ticksLatency, ticksLatency);
 	float dx = viewPos.x;
 	dx-=CheckPos.x;
 	float dy = viewPos.y;
