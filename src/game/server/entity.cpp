@@ -39,7 +39,7 @@ int CEntity::NetworkClipped(int SnappingClient, vec2 CheckPos)
 	if(SnappingClient == -1)
 		return 0;
 	CPlayer *player = GameServer()->m_apPlayers[SnappingClient];
-	int ticksLatency = player->m_Latency.m_Avg / 20;
+	int ticksLatency = player->m_Latency.m_Avg;
 	vec2 viewPos = player->m_ViewPos;
 	vec2 predViewPos = viewPos;
 	if (player->GetCharacter())
@@ -57,7 +57,7 @@ int CEntity::NetworkClipped(int SnappingClient, vec2 CheckPos)
 	if(absolute(dx) > 1000.0f || absolute(dy) > 800.0f)
 		return 1;
 
-	if(distance(viewPos, CheckPos) > 100.0f)
+	if(distance(viewPos, CheckPos) > 200.0f)
 		return 1;
 	return 0;
 }
