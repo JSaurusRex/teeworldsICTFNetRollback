@@ -698,7 +698,6 @@ void CCharacter::Tick()
 	{
 		m_Pos = dieWhere; //there die!
 		Die(dieFrom, dieWeapon);
-		dieCounter = -1;
 	}
 	m_Core.m_Input = m_Input;
 
@@ -866,8 +865,7 @@ void CCharacter::Die(int Killer, int Weapon)
 	Msg.m_ModeSpecial = ModeSpecial;
 	Server()->SendPackMsg(&Msg, MSGFLAG_VITAL, -1);
 
-	// a nice sound
-	GameServer()->CreateSound(m_Pos, SOUND_PLAYER_DIE);
+	
 
 	if(GameServer()->m_pController->IsIFreeze() && Weapon != WEAPON_GAME && Weapon != WEAPON_WORLD)
 		return;
@@ -880,7 +878,13 @@ void CCharacter::Die(int Killer, int Weapon)
 	m_Alive = false;
 	GameServer()->m_World.RemoveEntity(this);
 	GameServer()->m_World.m_Core.m_apCharacters[m_pPlayer->GetCID()] = 0;
-	GameServer()->CreateDeath(m_Pos, m_pPlayer->GetCID());
+	if(dieCounter == -1) 
+	{
+		GameServer()->CreateDeath(m_Pos, m_pPlayer->GetCID());
+		// a nice sound
+		GameServer()->CreateSound(m_Pos, SOUND_PLAYER_DIE);
+	}
+	dieCounter = -1;
 }
 
 bool CCharacter::TakeDamage(vec2 Force, int Dmg, int From, int Weapon)
@@ -978,7 +982,9 @@ bool CCharacter::TakeDamage(vec2 Force, int Dmg, int From, int Weapon)
 		dieCounter = m_pPlayer->m_Latency.m_Avg / 20;
 		dieFrom = From;
 		dieWeapon = Weapon;
-		
+		GameServer()->CreateDeath(m_Pos, m_pPlayer->GetCID());
+		// a nice sound
+		GameServer()->CreateSound(m_Pos, SOUND_PLAYER_DIE);
 
 		// set attacker's face to happy (taunt!)
 		if (From >= 0 && From != m_pPlayer->GetCID() && GameServer()->m_apPlayers[From])
