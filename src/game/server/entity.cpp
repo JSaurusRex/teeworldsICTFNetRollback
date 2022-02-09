@@ -54,10 +54,10 @@ int CEntity::NetworkClipped(int SnappingClient, vec2 CheckPos)
 	float pdy = predViewPos.y;
 	pdy-=CheckPos.y;
 
-	if(absolute(dx) > 2000.0f || absolute(dy) > 800.0f)
+	if(absolute(dx) > 1000.0f || absolute(dy) > 800.0f)
 		return 1;
 
-	if(distance(viewPos, CheckPos) > 2100.0f)
+	if(distance(viewPos, CheckPos) > 100.0f)
 		return 1;
 	return 0;
 }
