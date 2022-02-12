@@ -59,6 +59,7 @@ bool CCharacter::Spawn(CPlayer *pPlayer, vec2 Pos)
 {
 	m_EmoteStop = -1;
 	m_LastAction = -1;
+	dieCounter = -1;
 
 	if(GameServer()->m_pController->IsInstagib())
 	{

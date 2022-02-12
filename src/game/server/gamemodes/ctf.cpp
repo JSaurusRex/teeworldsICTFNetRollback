@@ -202,7 +202,7 @@ void CGameControllerCTF::Tick()
 			{
 				if(distance(F->m_Pos, m_apFlags[fi^1]->m_Pos) < CFlag::ms_PhysSize + CCharacter::ms_PhysSize)
 				{
-					if(F->m_pCarryingCharacter->dieCounter != 0)
+					if(F->m_pCarryingCharacter->dieCounter != -1)
 						continue;
 					// CAPTURE! \o/
 					m_aTeamscore[fi^1] += 100;
@@ -247,7 +247,7 @@ void CGameControllerCTF::Tick()
 				if(!apCloseCCharacters[i]->IsAlive() || apCloseCCharacters[i]->GetPlayer()->GetTeam() == TEAM_SPECTATORS || GameServer()->Collision()->IntersectLine(F->m_Pos, apCloseCCharacters[i]->m_Pos, NULL, NULL))
 					continue;
 
-				if(apCloseCCharacters[i]->dieCounter != 0)
+				if(apCloseCCharacters[i]->dieCounter != -1)
 					continue;
 				if(apCloseCCharacters[i]->GetPlayer()->GetTeam() == F->m_Team)
 				{
