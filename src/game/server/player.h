@@ -15,6 +15,7 @@ class CPlayer
 public:
 	CPlayer(CGameContext *pGameServer, int ClientID, int Team);
 	~CPlayer();
+	bool useLatComp= false;
 
 	void Init(int CID);
 

@@ -41,7 +41,7 @@ int CEntity::NetworkClipped(int SnappingClient, vec2 CheckPos)
 	CPlayer *player = GameServer()->m_apPlayers[SnappingClient];
 	if (player->GetCharacter())
 		if(player->GetCharacter()->dieCounter != -1)
-			return 0;
+			return 1;
 	int ticksLatency = player->m_Latency.m_Avg;
 	vec2 viewPos = player->m_ViewPos;
 	vec2 predViewPos = viewPos;

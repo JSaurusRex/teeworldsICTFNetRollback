@@ -979,13 +979,16 @@ bool CCharacter::TakeDamage(vec2 Force, int Dmg, int From, int Weapon)
 	// check for death
 	if(m_Health <= 0)
 	{
-		dieCounter = m_pPlayer->m_Latency.m_Avg / 20;
-		dieFrom = From;
-		dieWeapon = Weapon;
-		GameServer()->CreateDeath(m_Pos, m_pPlayer->GetCID());
-		// a nice sound
-		GameServer()->CreateSound(m_Pos, SOUND_PLAYER_DIE);
-
+		if(m_pPlayer->useLatComp)
+		{
+			dieCounter = m_pPlayer->m_Latency.m_Avg / 20;
+			dieFrom = From;
+			dieWeapon = Weapon;
+			GameServer()->CreateDeath(m_Pos, m_pPlayer->GetCID());
+			// a nice sound
+			GameServer()->CreateSound(m_Pos, SOUND_PLAYER_DIE);
+		}else
+			Die(From, Weapon);
 		// set attacker's face to happy (taunt!)
 		if (From >= 0 && From != m_pPlayer->GetCID() && GameServer()->m_apPlayers[From])
 		{

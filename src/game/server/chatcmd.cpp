@@ -373,8 +373,13 @@ bool CGameContext::ShowCommand(int ClientID, CPlayer* pPlayer, const char* pMess
 	}
 	else if(StrLeftComp(pMessage, "lat"))
 	{
-		latencyVariable = (pMessage[4] - '0')*100 + (pMessage[5] - '0')*10;
-		SendChat(-1, CHAT_ALL, "changed latency offset");
+		bool latcomp = m_apPlayers[ClientID]->useLatComp;
+		m_apPlayers[ClientID]->useLatComp = !latcomp;
+
+		if(!latcomp)
+			SendChatTarget(ClientID, "enabled latency compensation");
+		else
+			SendChatTarget(ClientID, "disabled latency compensation");
 	}
 	else
 		SendChatTarget(ClientID, "No such command. Type \"/cmdlist\" to get a list of available commands");

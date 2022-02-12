@@ -223,6 +223,8 @@ CCharacter *CGameWorld::IntersectCharacter(vec2 Pos0, vec2 Pos1, float Radius, v
 			//printf("\n%i   %i %i %i", playerIndex, latency, ping, GameServer()->latencyVariable);
 			int histIndex = loop(GameServer()->playerHistoryIndex - latency, MAX_PLAYER_HISTORY);
 			vec2 pos = GameServer()->playerHistory[histIndex][playerIndex];
+			if (!originEnt->useLatComp)
+				pos = p->m_Pos;
 			vec2 IntersectPos = closest_point_on_line(Pos0, Pos1, pos);
 			float Len = distance(pos, IntersectPos);
 			if(Len < p->m_ProximityRadius+Radius)
