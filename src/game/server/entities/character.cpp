@@ -982,7 +982,7 @@ bool CCharacter::TakeDamage(vec2 Force, int Dmg, int From, int Weapon)
 	{
 		if(m_pPlayer->useLatComp)
 		{
-			dieCounter = m_pPlayer->m_Latency.m_Avg / 20;
+			dieCounter = m_pPlayer->m_Latency.m_Avg / (1000/Server()->TickSpeed());
 			dieFrom = From;
 			dieWeapon = Weapon;
 			GameServer()->CreateDeath(m_Pos, m_pPlayer->GetCID());

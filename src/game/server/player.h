@@ -92,6 +92,7 @@ public:
 	// network latency calculations
 	struct
 	{
+		int m_last;
 		int m_Accum;
 		int m_AccumMin;
 		int m_AccumMax;

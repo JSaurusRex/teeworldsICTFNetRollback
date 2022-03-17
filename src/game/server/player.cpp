@@ -60,6 +60,7 @@ void CPlayer::Tick()
 		IServer::CClientInfo Info;
 		if(Server()->GetClientInfo(m_ClientID, &Info))
 		{
+			m_Latency.m_last = Info.m_Latency;
 			m_Latency.m_Accum += Info.m_Latency;
 			m_Latency.m_AccumMax = max(m_Latency.m_AccumMax, Info.m_Latency);
 			m_Latency.m_AccumMin = min(m_Latency.m_AccumMin, Info.m_Latency);
