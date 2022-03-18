@@ -68,6 +68,7 @@ protected:
 	int m_ID;
 	int m_ObjType;
 public:
+	class CPlayer *m_pPlayer = 0;
 	CEntity(CGameWorld *pGameWorld, int Objtype);
 	virtual ~CEntity();
 
