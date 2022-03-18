@@ -6,6 +6,8 @@
 #include <engine/shared/config.h>
 #include <stdio.h>
 
+#include "bot.h"
+
 bool CGameContext::ShowCommand(int ClientID, CPlayer* pPlayer, const char* pMessage, int *pTeam)
 {
 	if(StrLeftComp(pMessage, "go") || StrLeftComp(pMessage, "stop") || StrLeftComp(pMessage, "restart"))
@@ -25,7 +27,7 @@ bool CGameContext::ShowCommand(int ClientID, CPlayer* pPlayer, const char* pMess
 	if(StrLeftComp(pMessage, "info"))
 	{
 		char aBuf[128];
-		str_format(aBuf, sizeof(aBuf), "TW+ Mod v.%s created by Teetime.", MOD_VERSION);
+		str_format(aBuf, sizeof(aBuf), "TW+ Mod v.%s created by Teetime. Improved by hardliner66 and JSaurusRex.", MOD_VERSION);
 		SendChatTarget(ClientID, aBuf);
 
 		SendChatTarget(ClientID, "For a list of available commands type \"/cmdlist\"");
@@ -54,6 +56,8 @@ bool CGameContext::ShowCommand(int ClientID, CPlayer* pPlayer, const char* pMess
 		if(g_Config.m_SvPrivateMessage || AuthLevel)
 		{
 			SendChatTarget(ClientID, "\"/sayto <Name/ID> <Msg>\" Send a private message to a player");
+			SendChatTarget(ClientID, "\"/whisper <Name/ID> <Msg>\" Send a private message to a player");
+			SendChatTarget(ClientID, "\"/w <Name/ID> <Msg>\" Send a private message to a player");
 			SendChatTarget(ClientID, "\"/r <Msg>\" Answer to the player, the last PM came from");
 		}
 
@@ -62,6 +66,19 @@ bool CGameContext::ShowCommand(int ClientID, CPlayer* pPlayer, const char* pMess
 			SendChatTarget(ClientID, "\"/stop\" Pause the game");
 			SendChatTarget(ClientID, "\"/go\" Start the game");
 			SendChatTarget(ClientID, "\"/restart\" Start a new round");
+		}
+
+		if(g_Config.m_SvBotsEnabled)
+		{
+			SendChatTarget(ClientID, "\"/difficulty\" Shows the current difficulty.");
+			SendChatTarget(ClientID, "\"/d\" Shows the current difficulty.");
+			// SendChatTarget(ClientID, "\"/difficulty [difficulty]\" Changes the difficulty or shows all difficulties if called without argument.");
+			// SendChatTarget(ClientID, "\"/d [difficulty]\" Changes the difficulty or shows all difficulties if called without argument.");
+			SendChatTarget(ClientID, "\"/difficulties\" Show available difficulties");
+			SendChatTarget(ClientID, "\"/ds\" Show available difficulties");
+			if (g_Config.m_SvBotVsHuman) {
+				SendChatTarget(ClientID, "\"/switch\" Vote to switch sides");
+			}
 		}
 
 		if(g_Config.m_SvXonxFeature)
@@ -80,16 +97,37 @@ bool CGameContext::ShowCommand(int ClientID, CPlayer* pPlayer, const char* pMess
 	}
 	else if(StrLeftComp(pMessage, "stop"))
 	{
-		if(pPlayer->GetTeam() != TEAM_SPECTATORS)
+		int team = pPlayer->GetTeam();
+		if(team != TEAM_SPECTATORS)
 		{
 			if(g_Config.m_SvStopGoFeature)
 			{
-				if(!m_World.m_Paused)
-				{
-					m_World.m_Paused = true;
-					SendChat(-1, CHAT_ALL, "Game paused.");
+				int maxStops = g_Config.m_SvMaxStopRequestsPerTeam;
+				if (maxStops) {
+					if (m_pController->m_StopsTaken[team] < maxStops) {
+						if(!m_World.m_Paused)
+						{
+							m_pController->m_StopsTaken[team]++;
+							int stopsTaken = m_pController->m_StopsTaken[team];
+							m_World.m_Paused = true;
+
+							const char* team_name = team == TEAM_RED ? "Red" : "Blue";
+							char aBuf[128];
+							str_format(aBuf, sizeof(aBuf), "%s team called for timeout (%d/%d).", team_name, stopsTaken, maxStops);
+							SendChat(-1, CHAT_ALL, aBuf);
+						}
+						m_pController->m_FakeWarmup = 0;
+					} else {
+						SendChatTarget(ClientID, "Your team has no more stops left!");
+					}
+				} else {
+					if(!m_World.m_Paused)
+					{
+						m_World.m_Paused = true;
+						SendChat(-1, CHAT_ALL, "Game paused.");
+					}
+					m_pController->m_FakeWarmup = 0;
 				}
-				m_pController->m_FakeWarmup = 0;
 			}
 			else
 				SendChatTarget(ClientID, "This feature is not available at the moment.");
@@ -123,6 +161,67 @@ bool CGameContext::ShowCommand(int ClientID, CPlayer* pPlayer, const char* pMess
 				SendChatTarget(ClientID, "This feature is not available at the moment.");
 		}
 		return true;
+	}
+	else if(StrLeftComp(pMessage, "switch"))
+	{
+		if (g_Config.m_SvBotsEnabled && !g_Config.m_SvBotVsHuman) {
+			return false;
+		}
+		if(CanStartVote(pPlayer))
+		{
+			char aDesc[VOTE_DESC_LENGTH] = "switch";
+			char aCmd[VOTE_CMD_LENGTH] = "switch";
+
+			StartVoteAs(aDesc, aCmd, "", pPlayer);
+		}
+		return true;
+	}
+	else if(StrLeftComp(pMessage, "difficulties") || StrLeftComp(pMessage, "ds"))
+	{
+		if (!g_Config.m_SvBotsEnabled) {
+			return false;
+		}
+
+		SendDifficulties(ClientID);
+
+		return false;
+	}
+	else if(StrLeftComp(pMessage, "difficulty") || StrLeftComp(pMessage, "d"))
+	{
+		if (!g_Config.m_SvBotsEnabled) {
+			return false;
+		}
+
+		// if(CanStartVote(pPlayer))
+		// {
+		// 	int Args;
+		// 	int Difficulty;
+		// 	if ((Args = sscanf(pMessage, "difficulty %d", &Difficulty)) >= 1
+		// 	||  (Args = sscanf(pMessage, "d %d", &Difficulty)) >= 1)
+		// 	{
+		// 		if (ValidDifficulty(Difficulty)) {
+		// 			char aBuf[64];
+		// 			str_format(aBuf, sizeof(aBuf), "Change difficulty to \"%s\"", GetDifficultyName(Difficulty));
+		// 			char bBuf[64];
+		// 			str_format(bBuf, sizeof(bBuf), "difficulty %d", Difficulty);
+		// 			StartVoteAs(aBuf, bBuf, "", pPlayer);
+		// 		} else {
+		// 			SendChatTarget(ClientID, "Invalid difficulty.");
+
+		// 			SendDifficulties(ClientID);
+		// 		}
+		// 	} else {
+				// if (str_comp_nocase(pMessage, "difficulty") || str_comp_nocase(pMessage, "d")) {
+					char bBuf[64];
+					str_format(bBuf, sizeof(bBuf), "Current Difficulty: %s", GetDifficultyName(m_BotDifficulty));
+					SendChatTarget(ClientID, bBuf);
+				// } else {
+				// 	SendChatTarget(ClientID, "Invalid difficulty. Difficulty should be a number.");
+				// 	SendChatTarget(ClientID, "Usage: /difficulty [difficulty]");
+				// }
+		// 	}
+		// }
+		return false;
 	}
 	else if(StrLeftComp(pMessage, "1on1") || StrLeftComp(pMessage, "2on2") || StrLeftComp(pMessage, "3on3") ||
 			StrLeftComp(pMessage, "4on4") || StrLeftComp(pMessage, "5on5") || StrLeftComp(pMessage, "6on6"))
@@ -194,7 +293,7 @@ bool CGameContext::ShowCommand(int ClientID, CPlayer* pPlayer, const char* pMess
 		ShowStats(ClientID, ReceiverID);
 		return false;
 	}
-	else if((Len=StrLeftComp(pMessage, "sayto")) || (Len=StrLeftComp(pMessage, "st")) || (Len=StrLeftComp(pMessage, "pm")))
+	else if((Len=StrLeftComp(pMessage, "sayto")) || (Len=StrLeftComp(pMessage, "st")) || (Len=StrLeftComp(pMessage, "pm")) || (Len=StrLeftComp(pMessage, "whisper")) || (Len=StrLeftComp(pMessage, "w")))
 	{
 		if(!g_Config.m_SvPrivateMessage && !AuthLevel)
 			SendChatTarget(ClientID, "This feature is not available at the moment.");

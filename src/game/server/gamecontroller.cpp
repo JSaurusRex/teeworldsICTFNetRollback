@@ -17,6 +17,7 @@ IGameController::IGameController(class CGameContext *pGameServer)
 	m_pGameServer = pGameServer;
 	m_pServer = m_pGameServer->Server();
 	m_pGameType = "unknown";
+	m_PlayerTeamRed = true;
 
 	//
 	DoWarmup(g_Config.m_SvWarmup);
@@ -198,6 +199,8 @@ void IGameController::EndRound()
 
 void IGameController::ResetGame()
 {
+	m_StopsTaken[TEAM_RED] = 0;
+	m_StopsTaken[TEAM_BLUE] = 0;
 	GameServer()->m_World.m_ResetRequested = true;
 }
 
@@ -225,20 +228,47 @@ void IGameController::StartRound()
 {
 	ResetGame();
 
-	for(int i = 0; i < MAX_CLIENTS; i++)
-		if(GameServer()->m_apPlayers[i])
+	for(int i = 0; i < MAX_CLIENTS; i++) {
+		CPlayer* pPlayer = GameServer()->m_apPlayers[i];
+		if(pPlayer)
 		{
-			mem_zero(&GameServer()->m_apPlayers[i]->m_Stats, sizeof(GameServer()->m_apPlayers[i]->m_Stats));
-			GameServer()->m_apPlayers[i]->m_GotAward = false;
-			GameServer()->m_apPlayers[i]->m_Spree = 0;
+			mem_zero(&pPlayer->m_Stats, sizeof(GameServer()->m_apPlayers[i]->m_Stats));
+			pPlayer->m_GotAward = false;
+			pPlayer->m_Spree = 0;
+
+			const int team = pPlayer->GetTeam();
+
+			if (g_Config.m_SvBotsEnabled && g_Config.m_SvBotVsHuman && (team != TEAM_SPECTATORS)) {
+				if (m_PlayerTeamRed) {
+					if (pPlayer->m_IsBot && team == TEAM_RED) {
+						pPlayer->SetTeam(TEAM_BLUE, false);
+					}
+					if (!pPlayer->m_IsBot && team != TEAM_RED) {
+						pPlayer->SetTeam(TEAM_RED, false);
+					}
+				} else {
+					if (pPlayer->m_IsBot && team != TEAM_RED) {
+						pPlayer->SetTeam(TEAM_RED, false);
+					}
+					if (!pPlayer->m_IsBot && team == TEAM_RED) {
+						pPlayer->SetTeam(TEAM_BLUE, false);
+					}
+				}
+			}
 		}
+	}
 
 	m_RoundStartTick = Server()->Tick();
 	m_SuddenDeath = 0;
 	m_GameOverTick = -1;
 	GameServer()->m_World.m_Paused = false;
-	m_aTeamscore[TEAM_RED] = 0;
-	m_aTeamscore[TEAM_BLUE] = 0;
+
+	m_aTeamscore[TEAM_RED] = g_Config.m_SvRedStartPoints;
+	m_aTeamscore[TEAM_BLUE] = g_Config.m_SvBlueStartPoints;
+
+	g_Config.m_SvRedStartPoints = 0;
+	g_Config.m_SvBlueStartPoints = 0;
+
 	m_ForceBalanced = false;
 	Server()->DemoRecorder_HandleAutoStart();
 	char aBuf[256];
@@ -555,6 +585,9 @@ void IGameController::Tick()
 					break;
 			}
 		#endif
+			// Preserve bot
+			if(GameServer()->m_apPlayers[i] && GameServer()->m_apPlayers[i]->m_IsBot)
+				break;
 			if(GameServer()->m_apPlayers[i] && GameServer()->m_apPlayers[i]->GetTeam() != TEAM_SPECTATORS && !Server()->IsAuthed(i))
 			{
 				if(Server()->Tick() > GameServer()->m_apPlayers[i]->m_LastActionTick+g_Config.m_SvInactiveKickTime*Server()->TickSpeed()*60)
@@ -598,6 +631,11 @@ void IGameController::Tick()
 bool IGameController::IsTeamplay() const
 {
 	return m_GameFlags&GAMEFLAG_TEAMS;
+}
+
+bool IGameController::IsFlagGame() const
+{
+	return m_GameFlags&GAMEFLAG_FLAGS;
 }
 
 void IGameController::Snap(int SnappingClient)

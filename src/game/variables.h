@@ -68,6 +68,7 @@ MACRO_CONFIG_INT(SvTimelimit, sv_timelimit, 0, 0, 1000, CFGFLAG_SERVER, "Time li
 MACRO_CONFIG_STR(SvGametype, sv_gametype, 32, "dm", CFGFLAG_SERVER, "Game type (dm, tdm, ctf, idm, itdm, ictf, ifreeze, gdm, gtdm, gctf)")
 MACRO_CONFIG_INT(SvTournamentMode, sv_tournament_mode, 0, 0, 1, CFGFLAG_SERVER, "Tournament mode. When enabled, players joins the server as spectator")
 MACRO_CONFIG_INT(SvSpamprotection, sv_spamprotection, 1, 0, 1, CFGFLAG_SERVER, "Spam protection")
+MACRO_CONFIG_INT(SvAllowEmoteSpam, sv_allow_emote_spam, 1, 0, 1, CFGFLAG_SERVER, "Allow emote spam")
 
 MACRO_CONFIG_INT(SvRespawnDelayTDM, sv_respawn_delay_tdm, 3, 0, 10, CFGFLAG_SERVER, "Time needed to respawn after death in tdm gametype")
 
@@ -82,6 +83,25 @@ MACRO_CONFIG_INT(SvVoteSpectateRejoindelay, sv_vote_spectate_rejoindelay, 3, 0, 
 MACRO_CONFIG_INT(SvVoteKick, sv_vote_kick, 1, 0, 1, CFGFLAG_SERVER, "Allow voting to kick players")
 MACRO_CONFIG_INT(SvVoteKickMin, sv_vote_kick_min, 0, 0, MAX_CLIENTS, CFGFLAG_SERVER, "Minimum number of players required to start a kick vote")
 MACRO_CONFIG_INT(SvVoteKickBantime, sv_vote_kick_bantime, 5, 0, 1440, CFGFLAG_SERVER, "The time to ban a player if kicked by vote. 0 makes it just use kick")
+
+//Server Bots
+MACRO_CONFIG_INT(SvBotsEnabled, sv_bots_enabled, 0, 0, 1, CFGFLAG_SERVER, "Enable bots")
+MACRO_CONFIG_INT(SvBotStartDifficulty, sv_bot_start_difficulty, 3, -3, 99, CFGFLAG_SERVER, "Bot Start Difficulty")
+MACRO_CONFIG_INT(SvBotAccuracy, sv_bot_accuracy, 52, 0, 100, CFGFLAG_SERVER, "Bot Accuracy")
+MACRO_CONFIG_INT(SvBotDelay, sv_bot_delay, 10, 0, 50, CFGFLAG_SERVER, "Bot Delay")
+MACRO_CONFIG_INT(SvBotReach, sv_bot_reach, 100, 0, 100, CFGFLAG_SERVER, "Bot Aim Distance in percent")
+MACRO_CONFIG_INT(SvBotHookReach, sv_bot_hook_reach, 100, 0, 100, CFGFLAG_SERVER, "Bot Hook Distance in percent")
+MACRO_CONFIG_INT(SvBotSlots, sv_bot_slots, 2, 0, MAX_CLIENTS, CFGFLAG_SERVER, "Number of slots to reserve for bots")
+MACRO_CONFIG_INT(SvBotVsHuman, sv_bot_vs_human, 1, 0, 1, CFGFLAG_SERVER, "If bots only join the enemy team")
+MACRO_CONFIG_INT(SvBotSwitchTime, sv_bot_switch_time, 5, 0, 600, CFGFLAG_SERVER, "Time to switch sides")
+MACRO_CONFIG_STR(SvBotSkin, sv_bot_skin, 24, "default", CFGFLAG_SERVER, "Bot skin")
+MACRO_CONFIG_INT(SvBotAllowHook, sv_bot_allow_hook, 1, 0, 1, CFGFLAG_SERVER, "Bots are allowed to hook")
+MACRO_CONFIG_INT(SvBotAllowPlayerHook, sv_bot_allow_player_hook, 1, 0, 1, CFGFLAG_SERVER, "Bots are allowed to hook player")
+MACRO_CONFIG_INT(SvBotAllowMove, sv_bot_allow_move, 1, 0, 1, CFGFLAG_SERVER, "Bots are allowed to move")
+MACRO_CONFIG_INT(SvBotAllowFire, sv_bot_allow_fire, 1, 0, 1, CFGFLAG_SERVER, "Bots fire")
+MACRO_CONFIG_INT(SvBotDrawTarget, sv_bot_draw_target, 0, 0, 1, CFGFLAG_SERVER, "Show bot target")
+MACRO_CONFIG_INT(SvBotEngineDrawGraph, sv_botengine_draw_graph, 0, 0, 1, CFGFLAG_SERVER, "Draw graph")
+
 // debug
 #ifdef CONF_DEBUG // this one can crash the server if not used correctly
 	MACRO_CONFIG_INT(DbgDummies, dbg_dummies, 0, 0, 15, CFGFLAG_SERVER, "")
@@ -120,6 +140,9 @@ MACRO_CONFIG_INT(SvEmotionalTees, sv_emotional_tees, 1, 0, 1, CFGFLAG_SERVER, "E
 MACRO_CONFIG_INT(SvPrivateMessage, sv_private_message, 1, 0, 1, CFGFLAG_SERVER, "Enable/Disable private message")
 MACRO_CONFIG_INT(SvSpawnprotection, sv_spawnprotection, 0, 0, 5, CFGFLAG_SERVER, "Spawnprotection in seconds (0 disables)")
 MACRO_CONFIG_INT(SvLaserReloadTime, sv_laser_reload_time, 800, 0, 2400, CFGFLAG_SERVER, "Reload-time for laser when you are not at killing-spree (Default: 800)")
+MACRO_CONFIG_INT(SvRedStartPoints, sv_red_start_points, 0, 0, 1000, CFGFLAG_SERVER, "With how many points the red team starts the next round.")
+MACRO_CONFIG_INT(SvBlueStartPoints, sv_blue_start_points, 0, 0, 1000, CFGFLAG_SERVER, "With how many points the blue team starts the next round.")
+MACRO_CONFIG_INT(SvMaxStopRequestsPerTeam, sv_max_stop_requests_per_team, 0, 0, 10, CFGFLAG_SERVER, "How often a team can press stop. 0 to disable.")
 //
 MACRO_CONFIG_STR(SvStatsFile, sv_stats_file, 256, "stats.txt", CFGFLAG_SERVER, "Name of the file where the statistics are stored in")
 MACRO_CONFIG_INT(SvStatsOutputlevel, sv_stats_outputlevel, 0, 0, 3, CFGFLAG_SERVER, "How much informations in the statistics-file should be saved (0 to disable saving)")

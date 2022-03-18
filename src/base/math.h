@@ -33,6 +33,16 @@ inline T mix(const T a, const T b, TB amount)
 	return a + (b-a)*amount;
 }
 
+inline double map_range(double val, double start1, double end1, double start2, double end2) {
+	return (val - start1) / (end1 - start1) * (end2 - start2) + start2;
+}
+
+inline int random_int_range(int min, int max) {
+	int range = max - min + 1;
+	return rand() % range + min;
+}
+
+inline int random_int() { return (((rand() & 0xffff) << 16) | (rand() & 0xffff)) & 0x7FFFFFFF; };
 inline float frandom() { return rand()/(float)(RAND_MAX); }
 
 // float to fixed

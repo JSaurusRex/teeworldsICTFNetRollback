@@ -114,6 +114,7 @@ bool CCharacter::Spawn(CPlayer *pPlayer, vec2 Pos)
 	m_Alive = true;
 
 	GameServer()->m_pController->OnCharacterSpawn(this);
+	GameServer()->m_pBotEngine->OnCharacterSpawn(m_pPlayer->GetCID());
 
 	return true;
 }
@@ -841,6 +842,7 @@ void CCharacter::Die(int Killer, int Weapon)
 	// we got to wait 0.5 secs before respawning
 	m_pPlayer->m_RespawnTick = Server()->Tick()+Server()->TickSpeed()/2;
 	int ModeSpecial = GameServer()->m_pController->OnCharacterDeath(this, GameServer()->m_apPlayers[Killer], Weapon);
+	GameServer()->m_pBotEngine->OnCharacterDeath(m_pPlayer->GetCID(),Killer, Weapon);
 
 	char aBuf[256];
 	str_format(aBuf, sizeof(aBuf), "kill killer='%d:%s' victim='%d:%s' weapon=%d special=%d",
@@ -1018,8 +1020,6 @@ bool CCharacter::TakeDamage(vec2 Force, int Dmg, int From, int Weapon)
 void CCharacter::Snap(int SnappingClient)
 {
 	int latency = m_pPlayer->m_Latency.m_Avg;
-	//printf("\n%.1f %.1f", (vec2(latency, latency) * m_Core.m_Vel).x, (vec2(latency,latency) * m_Core.m_Vel).y);
-	//printf("\n%.1f %.1f\n", m_Pos.x, m_Pos.y);
 	if(NetworkClipped(SnappingClient, m_Pos + vec2(latency,latency) * m_Core.m_Vel) && NetworkClipped(SnappingClient, m_Pos))
 		return;
 
@@ -1205,7 +1205,7 @@ void CCharacter::KillChar()
 
 	// this is for auto respawn after 3 secs
 	m_pPlayer->m_DieTick = Server()->Tick();
-		m_Alive = false;
+	m_Alive = false;
 	GameServer()->m_World.RemoveEntity(this);
 	GameServer()->m_World.m_Core.m_apCharacters[m_pPlayer->GetCID()] = 0;
 	GameServer()->CreateDeath(m_Pos, m_pPlayer->GetCID());

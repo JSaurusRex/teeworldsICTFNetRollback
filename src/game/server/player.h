@@ -24,6 +24,7 @@ public:
 	void SetTeam(int Team, bool DoChatMsg=true);
 	int GetTeam() const { return m_Team; };
 	int GetCID() const { return m_ClientID; };
+	void SetCID(int ClientID);
 
 	void Tick();
 	void PostTick();
@@ -36,6 +37,8 @@ public:
 
 	void KillCharacter(int Weapon = WEAPON_GAME);
 	CCharacter *GetCharacter();
+
+	void SendLeaveMessage(const char* pReason);
 
 	//---------------------------------------------------------
 	// this is used for snapping so we know how we can clip the view for the player
@@ -66,6 +69,7 @@ public:
 	int m_LastChangeInfo;
 	int m_LastEmote;
 	int m_LastKill;
+	int m_SpecExplicit;
 
 	// TODO: clean this up
 	struct
@@ -100,6 +104,12 @@ public:
 		int m_Min;
 		int m_Max;
 	} m_Latency;
+
+	// Bot flag
+	bool m_IsBot;
+	class CBot *m_pBot;
+
+	bool IsBot() { return m_IsBot; }
 
 	int m_ChatTicks;
 	char m_aOldChatMsg[256];
