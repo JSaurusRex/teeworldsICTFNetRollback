@@ -706,7 +706,7 @@ void CBot::MakeChoice(bool UseTarget)
 	CWorldCore TempWorld;
 	TempWorld.m_Tuning = *GameServer()->Tuning();
 	TempChar.Init(&TempWorld, Collision());
-	TempChar.Tick(true);
+	TempChar.Tick(true, GameServer()->playerHistory);
 	TempChar.Move();
 	TempChar.Quantize();
 
