@@ -232,7 +232,6 @@ void CCharacterCore::Tick(bool UseInput, vec2 pHistory[40][MAX_CLIENTS])
 				int playerIndex = i;
 				if(originEnt != nullptr)
 				{
-					printf("not nullptr! ");
 					int latency =  (int)((originEnt->m_Latency.m_last) / (1000/50)); //20 milliseconds per tick, latency variable is latency in ticks
 					//printf("\n%i   %i %i %i", playerIndex, latency, ping, GameServer()->latencyVariable);
 					int histIndex = loop2(m_pWorld->m_GWorld->GameServer()->playerHistoryIndex - latency, MAX_PLAYER_HISTORY);
