@@ -2,6 +2,9 @@
 /* If you are missing that file, acquire a complete release at teeworlds.com.                */
 #include "gamecore.h"
 
+#include "server/gameworld.h"
+#include "server/gamecontext.h"
+
 const char *CTuningParams::m_apNames[] =
 {
 	#define MACRO_TUNING_PARAM(Name,ScriptName,Value) #ScriptName,
@@ -72,6 +75,15 @@ void CCharacterCore::Reset()
 	m_HookedPlayer = -1;
 	m_Jumped = 0;
 	m_TriggeredEvents = 0;
+}
+
+int loop2(int value, int loop)
+{
+	if (value < 0)
+		return -(abs(value)%loop);
+	if (value > loop)
+		return value % loop;
+	return value;
 }
 
 void CCharacterCore::Tick(bool UseInput, vec2 pHistory[40][MAX_CLIENTS])
@@ -215,11 +227,19 @@ void CCharacterCore::Tick(bool UseInput, vec2 pHistory[40][MAX_CLIENTS])
 				CCharacterCore *pCharCore = m_pWorld->m_apCharacters[i];
 				if(!pCharCore || pCharCore == this)
 					continue;
+				CPlayer * originEnt = m_pPlayer;
+				int playerIndex = i;
+				int latency =  (int)((originEnt->m_Latency.m_last) / (1000/50)); //20 milliseconds per tick, latency variable is latency in ticks
+				//printf("\n%i   %i %i %i", playerIndex, latency, ping, GameServer()->latencyVariable);
+				int histIndex = loop2(m_pWorld->m_GWorld->GameServer()->playerHistoryIndex - latency, MAX_PLAYER_HISTORY);
+				vec2 pos = m_pWorld->m_GWorld->GameServer()->playerHistory[histIndex][playerIndex];
+				if (!originEnt->useLatComp)
+					pos = pCharCore->m_Pos;
 
-				vec2 ClosestPoint = closest_point_on_line(m_HookPos, NewPos, pCharCore->m_Pos);
-				if(distance(pCharCore->m_Pos, ClosestPoint) < PhysSize+2.0f)
+				vec2 ClosestPoint = closest_point_on_line(m_HookPos, NewPos, pos);
+				if(distance(pos, ClosestPoint) < PhysSize+2.0f)
 				{
-					if (m_HookedPlayer == -1 || distance(m_HookPos, pCharCore->m_Pos) < Distance)
+					if (m_HookedPlayer == -1 || distance(m_HookPos, pos) < Distance)
 					{
 						m_TriggeredEvents |= COREEVENT_HOOK_ATTACH_PLAYER;
 						m_HookState = HOOK_GRABBED;

@@ -171,6 +171,8 @@ public:
 		mem_zero(m_apCharacters, sizeof(m_apCharacters));
 	}
 
+	class CGameWorld * m_GWorld;
+
 	CTuningParams m_Tuning;
 	class CCharacterCore *m_apCharacters[MAX_CLIENTS];
 };
@@ -181,6 +183,7 @@ class CCharacterCore
 	CCollision *m_pCollision;
 public:
 	CWorldCore *m_pWorld;
+	class CPlayer * m_pPlayer;
 	vec2 m_Pos;
 	vec2 m_Vel;
 

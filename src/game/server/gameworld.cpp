@@ -12,6 +12,7 @@ CGameWorld::CGameWorld()
 {
 	m_pGameServer = 0x0;
 	m_pServer = 0x0;
+	m_Core.m_GWorld = this;
 
 	m_Paused = false;
 	m_ResetRequested = false;

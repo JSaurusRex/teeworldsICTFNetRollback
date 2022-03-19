@@ -48,6 +48,7 @@ CCharacter::CCharacter(CGameWorld *pWorld)
 	m_Armor = 0;
 	m_FreezeTicks = 0;
 	m_DeepFreeze = false;
+	m_Core.m_pPlayer = m_pPlayer;
 }
 
 void CCharacter::Reset()
