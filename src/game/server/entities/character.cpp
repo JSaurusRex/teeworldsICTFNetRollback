@@ -48,7 +48,7 @@ CCharacter::CCharacter(CGameWorld *pWorld)
 	m_Armor = 0;
 	m_FreezeTicks = 0;
 	m_DeepFreeze = false;
-	m_Core.m_pPlayer = m_pPlayer;
+	
 }
 
 void CCharacter::Reset()
@@ -86,6 +86,7 @@ bool CCharacter::Spawn(CPlayer *pPlayer, vec2 Pos)
 
 	m_pPlayer = pPlayer;
 	m_Pos = Pos;
+	
 
 	for(int i = 0; i < NUM_WEAPONS-1; i++)
 		if(m_pPlayer->m_KeepWeapon[i] == true)
@@ -105,6 +106,7 @@ bool CCharacter::Spawn(CPlayer *pPlayer, vec2 Pos)
 	m_Core.Reset();
 	m_Core.Init(&GameServer()->m_World.m_Core, GameServer()->Collision());
 	m_Core.m_Pos = m_Pos;
+	m_Core.m_pPlayer = m_pPlayer;
 	GameServer()->m_World.m_Core.m_apCharacters[m_pPlayer->GetCID()] = &m_Core;
 
 	m_ReckoningTick = 0;

@@ -228,13 +228,19 @@ void CCharacterCore::Tick(bool UseInput, vec2 pHistory[40][MAX_CLIENTS])
 				if(!pCharCore || pCharCore == this)
 					continue;
 				CPlayer * originEnt = m_pPlayer;
+				vec2 pos = pCharCore->m_Pos;
 				int playerIndex = i;
-				int latency =  (int)((originEnt->m_Latency.m_last) / (1000/50)); //20 milliseconds per tick, latency variable is latency in ticks
-				//printf("\n%i   %i %i %i", playerIndex, latency, ping, GameServer()->latencyVariable);
-				int histIndex = loop2(m_pWorld->m_GWorld->GameServer()->playerHistoryIndex - latency, MAX_PLAYER_HISTORY);
-				vec2 pos = m_pWorld->m_GWorld->GameServer()->playerHistory[histIndex][playerIndex];
-				if (!originEnt->useLatComp)
-					pos = pCharCore->m_Pos;
+				if(originEnt != nullptr)
+				{
+					printf("not nullptr! ");
+					int latency =  (int)((originEnt->m_Latency.m_last) / (1000/50)); //20 milliseconds per tick, latency variable is latency in ticks
+					//printf("\n%i   %i %i %i", playerIndex, latency, ping, GameServer()->latencyVariable);
+					int histIndex = loop2(m_pWorld->m_GWorld->GameServer()->playerHistoryIndex - latency, MAX_PLAYER_HISTORY);
+					pos = m_pWorld->m_GWorld->GameServer()->playerHistory[histIndex][playerIndex];
+					if (!originEnt->useLatComp)
+						pos = pCharCore->m_Pos;
+				}
+				
 
 				vec2 ClosestPoint = closest_point_on_line(m_HookPos, NewPos, pos);
 				if(distance(pos, ClosestPoint) < PhysSize+2.0f)
